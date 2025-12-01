@@ -1,0 +1,243 @@
+
+ {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+html, body, #app {
+  height: 100%;
+}
+
+body {
+  background: #000000ff;
+  color: #172b4d;
+}
+
+/* Header */
+header {
+  height: 64px;
+  background: #260661ff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  box-shadow: 0 2px 6px rgba(2, 41, 71, 0.12);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.logo .mark {
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  border-radius: 6px;
+  color: #260661ff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.spacer {
+  flex: 1;
+}
+
+header button {
+  background: rgba(255, 255, 255, 0.14);
+  border: 0;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* fullscreen container */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 64px);
+}
+
+/* Login/Register center card */
+.auth-wrap {
+  display: grid;
+  place-items: center;
+  padding: 40px;
+}
+
+.auth-card {
+  width: 380px;
+  background: linear-gradient(180deg, #ffffff, #f7fbff);
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(9, 30, 66, 0.12);
+  padding: 26px;
+}
+
+.auth-card h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #172b4d;
+}
+
+.auth-card p {
+  font-size: 13px;
+  color: #42526e;
+  margin-bottom: 18px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.form-row input {
+  padding: 10px 12px;
+  border: 1px solid #dfe3e8;
+  border-radius: 8px;
+}
+
+.auth-card .actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-primary {
+  background: #5aac44;
+  color: #fff;
+  border: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-muted {
+  background: transparent;
+  border: 1px solid #dfe3e8;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.link {
+  color: #0065ff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* Board area */
+.board {
+  flex: 1;
+  padding: 18px;
+  overflow: auto;
+}
+
+.board-inner {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.list {
+  background: linear-gradient(180deg, #ebf2f8, #eef6ff);
+  min-width: 280px;
+  border-radius: 8px;
+  padding: 12px;
+  height: calc(100vh - 150px);
+  display: flex;
+  flex-direction: column;
+}
+
+.list h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.card-list {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(9, 30, 66, 0.06);
+  cursor: grab;
+}
+
+.card.dragging {
+  opacity: 0.6;
+}
+
+.list .add-card {
+  margin-top: 8px;
+}
+
+.add-card input {
+  width: 100%;
+  padding: 8px;
+  border: 1px dashed rgba(9, 30, 66, 0.08);
+  border-radius: 6px;
+}
+
+/* minimal controls */
+.list-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.small-btn {
+  background: transparent;
+  border: 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* footer / mobile responsiveness */
+@media (max-width: 900px) {
+  .board-inner {
+    padding-bottom: 40px;
+  }
+
+  .list {
+    min-width: 220px;
+  }
+}
+
+/* subtle scrollbar styling */
+.card-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-list::-webkit-scrollbar-thumb {
+  background: rgba(9, 30, 66, 0.08);
+  border-radius: 8px;
+}
+
+/* simple toast */
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: #172b4d;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(2, 41, 71, 0.15);
+  display: none;
+}
