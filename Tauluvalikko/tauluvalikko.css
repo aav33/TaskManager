@@ -1,0 +1,39 @@
+.top-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.boards-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.board-card {
+  width: 200px;
+  height: 120px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 5px;
+}
+
+.profile-menu.hidden {
+  display: none;
+}
+
+::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
