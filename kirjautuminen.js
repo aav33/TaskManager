@@ -97,7 +97,7 @@ registerForm.addEventListener('submit', async (e)=>{
       }
     }
   } catch (err) {
-    showRegMessage('<span class="error">Palvelinvirhe: '+err.message+'</span>');
+    showRegMessage('<span class="error">YlempiPalvelinvirhe: '+err.message+'</span>');
   }
 });
 
@@ -127,6 +127,6 @@ loginForm.addEventListener('submit', async (e)=>{
       showLoginMessage('<span class="error">'+(json.message||'Kirjautuminen epäonnistui')+'</span>');
     }
   } catch (err) {
-    showLoginMessage('<span class="error">Palvelinvirhe: '+err.message+'</span>');
+    showLoginMessage('<span class="error">AlempiPalvelinvirhe: '+err.message+'</span>');
   }
 });

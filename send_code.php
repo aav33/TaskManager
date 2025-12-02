@@ -18,7 +18,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 // MySQL yhteys
-$conn = new mysqli("localhost", "root", "", "taskmanager");
+$conn = new mysqli("localhost", "root", "nakkikastike123", "taskmanager");
 if ($conn->connect_error) {
     echo json_encode(["ok" => false, "message" => $conn->connect_error]);
     exit;
@@ -66,3 +66,4 @@ try {
 } catch (Exception $e) {
     echo json_encode(["ok" => false, "message" => $e->getMessage()]);
 }
+?>
