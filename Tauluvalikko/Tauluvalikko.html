@@ -1,56 +1,56 @@
 <!DOCTYPE html>
 <html lang="fi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fake Trello - Tauluvalikko</title>
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fake Trello - Tauluvalikko</title>
   <link rel="stylesheet" href="tauluvalikko.css">
 </head>
+
 <body>
 
-<div class="top-bar">
-  <img src="img/edukosmall.png" class="edukologo"></img>
-  <input type="text" id="search-board" placeholder="Hae taulua nimellä...">
-  <input type="text" id="board-code" placeholder="Koodi">
-  <button id="create-board-btn">LUO</button>
-  <img id="profile-pic" src="profiili.png" alt="Profiili">
-</div>
-
-<hr></hr>
-
-<div class="profile-menu hidden">
-  <button onclick="alert('Oikotiet')">Oikotiet</button>
-  <button onclick="alert('Teema')">Teema</button>
-  <button onclick="alert('Usein kysytyt')">Usein kysytyt</button>
-  <button onclick="logout()">Kirjaudu ulos</button>
-</div>
-
-<div class="sections">
-  <h2>Suosikit</h2>
-  <div class="boards-row" id="favorites"></div>
-
-  <h2>Äskettäin katsotut</h2>
-  <div class="boards-row" id="recent"></div>
-
-  <h2>Taulut</h2>
-  <div class="boards-row" id="all-boards"></div>
-  <button id="show-more-btn" class="hidden">Näytä lisää</button>
-</div>
-
-<div id="board-view">
-  <div id="board-content">
-    <h2 id="board-title">Taulu</h2>
-    <div style="display:flex; margin-bottom:12px;">
-      <input type="text" id="new-task-input" placeholder="Uusi tehtävä">
-      <button onclick="addTask()">Lisää</button>
-    </div>
-    <div id="task-list"></div>
-    <button onclick="closeBoard()">Sulje taulu</button>
+<!--<div id="create-popup" class="popup hidden"> Popup/Tekemässä
+  <div class="popup-content">
+    <h3>Luo uusi taulu</h3>
+    <input type="text" id="new-board-title" placeholder="Taulun nimi">
+    <select id="privacy-select">
+      <option value="private">Yksityinen</option>
+      <option value="public">Julkinen (luo koodi)</option>
+    </select>
+    <button id="confirm-create">Luo taulu</button>
+    <button id="cancel-create">Peruuta</button>
   </div>
 </div>
+-->
+  <div class="top-bar">
+    <img src="img/edukosmall.png" class="edukologo">
+    <input type="text" id="search-board" placeholder="Hae taulua nimellä...">
+    <input type="text" id="board-code" placeholder="Koodi">
+    <button id="create-board-btn">LUO</button>
+    <img id="profile-pic" src="profiili.png" alt="Profiili">
+  </div>
 
-<script src="tauluvalikko.js"></script>
+  <hr>
 
+  <div class="profile-menu hidden">
+    <button onclick="alert('Oikotiet')">Oikotiet</button>
+    <button onclick="alert('Teema')">Teema</button>
+    <button onclick="alert('Usein kysytyt')">Usein kysytyt</button>
+    <button onclick="logout()">Kirjaudu ulos</button>
+  </div>
+
+  <div class="sections">
+    <h2>Suosikit</h2>
+    <div class="boards-row" id="favorites"></div>
+
+    <h2>Äskettäin katsotut</h2>
+    <div class="boards-row" id="recent"></div>
+
+    <h2>Taulut</h2>
+    <div class="boards-row" id="all-boards"></div>
+    <button id="show-more-btn" class="hidden">Näytä lisää</button>
+  </div>
 </body>
+<script src="tauluvalikko.js"></script>
 </html>

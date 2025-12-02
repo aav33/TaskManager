@@ -1,59 +1,68 @@
 <!doctype html>
-<html lang="en">
+<html lang="fi">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mini Boards — Taulunäkymä (Demo)</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mini Boards — Taulunäkymä (Demo)</title>
 
-<link rel="stylesheet" href="taulunakyma.css">
+  <link rel="stylesheet" href="taulunakyma.css">
 </head>
+
 <body>
-<div class="card">
-  <div class="sidebar">
-    <div class="logo">Mini Boards</div>
-    <div class="small">Boards</div>
-    <div class="boards-list" id="boardsList"></div>
+  <div class="card">
+    <!-- Sivupalkki -->
+    <div class="sidebar">
+      <div class="logo">Mini Boards</div>
+      <div class="small">Boards</div>
+      <div class="boards-list" id="boardsList"></div>
 
-    <div class="forms" style="margin-top:12px">
-      <input type="text" id="newBoardTitle" placeholder="Uusi taulu" />
-      <button class="btn" id="createBoardBtn">Luo</button>
+      <div class="forms" style="margin-top:12px">
+        <input type="text" id="newBoardTitle" placeholder="Uusi taulu" />
+        <button class="btn" id="createBoardBtn">Luo</button>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="small">Liity tauluun koodilla</div>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <input id="joinCodeInput" placeholder="000123"
+            style="flex:1;padding:8px;border-radius:8px;border:1px solid #e6e9f2" />
+          <button class="btn ghost" id="joinCodeBtn">Liity</button>
+        </div>
+        <div id="joinMsg" class="small" style="margin-top:8px"></div>
+      </div>
+
+      <div class="footer-note">
+        Tämä demo käyttää LocalStoragea. Jos backend on valmis, aseta <code>appConfig.backendAvailable=true</code> ja
+        voit tehdä oikean API‑pyynnön.
+      </div>
     </div>
 
-    <div style="margin-top:12px">
-      <div class="small">Liity tauluun koodilla</div>
-      <div style="display:flex;gap:8px;margin-top:6px">
-        <input id="joinCodeInput" placeholder="000123" style="flex:1;padding:8px;border-radius:8px;border:1px solid #e6e9f2" />
-        <button class="btn ghost" id="joinCodeBtn">Liity</button>
-      </div>
-      <div id="joinMsg" class="small" style="margin-top:8px"></div>
-    </div>
-
-    <div class="footer-note">Tämä demo käyttää LocalStoragea, jos backed on valmis, "appConfig.backendAvailable=true" kanssa voit tehdä oikean api pyynnön"</div>
-  </div>
-
-  <div class="main">
-    <div class="board-header">
-      <div>
-        <h2 class="board-title" id="boardTitle">Valitse taulu</h2>
-        <div class="small" id="boardMeta"></div>
-      </div>
-      <div class="controls">
-        <button class="btn ghost" id="shareBtn">Jaa</button>
-        <div id="shareCodeBox" style="display:none;align-items:center;gap:8px">
-          <span class="small" id="shareCodeText"></span>
-          <button class="btn" id="copyShareBtn">Kopioi</button>
+    <!-- Pääalue -->
+    <div class="main">
+      <div class="board-header">
+        <div>
+          <h2 class="board-title" id="boardTitle">Valitse taulu</h2>
+          <div class="small" id="boardMeta"></div>
+        </div>
+        <div class="controls">
+          <button class="btn ghost" id="shareBtn">Jaa</button>
+          <div id="shareCodeBox" style="display:none;align-items:center;gap:8px">
+            <span class="small" id="shareCodeText"></span>
+            <button class="btn" id="copyShareBtn">Kopioi</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="columns" id="columns"></div>
+      <div class="columns" id="columns"></div>
 
-    <div style="margin-top:12px">
-      <div class="small">Esimerkkiverkko: tehtävät, minitaulut ja jako.</div>
+      <div style="margin-top:12px">
+        <div class="small">Esimerkkiverkko: tehtävät, minitaulut ja jako.</div>
+      </div>
     </div>
   </div>
-</div>
 
-<script src="taulunakyma.js"></script>
+  <script src="taulunakyma.js"></script>
 </body>
+
 </html>

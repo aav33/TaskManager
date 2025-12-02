@@ -25,10 +25,8 @@ function uid() { return Math.floor(Date.now() + Math.random()*1000); }
 // initial demo data
 let store = loadData();
 if (!store._initialized) {
-  // create a demo user
   const me = { id: 1, email: 'demo@example.com', display_name: 'Demo' };
   store.users.push(me);
-  // demo board
   const bid = uid();
   store.boards.push({ id: bid, owner_id: me.id, title: 'Esimerkkitaulu', visibility: 'private', share_code: null, share_code_expires: null, created_at: new Date().toISOString() });
   const c1 = uid(); const c2 = uid();
@@ -83,13 +81,11 @@ function render() {
     shareCodeBox.style.display='none';
   }
 
-  // columns
   const categories = store.categories.filter(c=>c.board_id===board.id);
   columnsEl.innerHTML = '';
   categories.forEach(cat => {
     const col = document.createElement('div'); col.className='column';
     col.innerHTML = `<h3><span class="color-dot" style="background:${cat.color||'#ddd'}"></span>${escapeHtml(cat.name)}</h3>`;
-    // add category controls
     const inputRow = document.createElement('div'); inputRow.className='input-row';
     const tInput = document.createElement('input'); tInput.placeholder='Uusi tehtävä';
     const addBtn = document.createElement('button'); addBtn.className='btn'; addBtn.textContent='Lisää';
@@ -103,7 +99,6 @@ function render() {
     } else {
       tasks.forEach(t=>{ const tEl = renderTask(t); col.appendChild(tEl); });
     }
-    // category footer: delete
     const footer = document.createElement('div'); footer.style.marginTop='8px';
     const delCat = document.createElement('button'); delCat.className='btn ghost'; delCat.textContent='Poista kategoria';
     delCat.onclick = ()=>{ if(confirm('Poistetaanko kategoria ja sen tehtävät?')) deleteCategory(cat.id); };
@@ -113,7 +108,6 @@ function render() {
     columnsEl.appendChild(col);
   });
 
-  // add column UI
   const addCol = document.createElement('div'); addCol.className='column';
   addCol.innerHTML = `<h3>+ Lisää minitaulu</h3>`;
   const inputRow = document.createElement('div'); inputRow.className='input-row';
@@ -151,15 +145,37 @@ function deleteCategory(catId) {
 function addTask(categoryId, title) {
   const pos = store.tasks.filter(t=>t.category_id===categoryId).length + 1;
   const t = { id: uid(), category_id: categoryId, title, is_done:0, position: pos };
-  store.tasks.push(t); saveData(store); render();
+  store.tasks.push(t);
+  saveData(store);
+  render();
 }
-function deleteTask(taskId) { store.tasks = store.tasks.filter(t=>t.id!==taskId); saveData(store); render(); }
-function editTask(taskId, title) { const t = store.tasks.find(x=>x.id===taskId); if(t){ t.title=title; saveData(store); render(); } }
-function toggleDone(taskId, isDone) { const t = store.tasks.find(x=>x.id===taskId); if(t){ t.is_done = isDone?1:0; saveData(store); render(); } }
 
-// share code generation (local) — uses same format as server would
+function deleteTask(taskId) {
+  store.tasks = store.tasks.filter(t=>t.id!==taskId);
+  saveData(store);
+  render();
+}
+
+function editTask(taskId, title) {
+  const t = store.tasks.find(x=>x.id===taskId);
+  if(t){
+    t.title = title;
+    saveData(store);
+    render();
+  }
+}
+
+function toggleDone(taskId, isDone) {
+  const t = store.tasks.find(x=>x.id===taskId);
+  if(t){
+    t.is_done = isDone ? 1 : 0;
+    saveData(store);
+    render();
+  }
+}
+
+// --- share code generation (local) ---
 function generateLocalShareCode() {
-  const tries = 0;
   let code;
   do {
     code = String(Math.floor(Math.random()*1000000)).padStart(6,'0');
@@ -171,15 +187,21 @@ async function activateShareLocal(boardId, hours=24) {
   const b = store.boards.find(x=>x.id===boardId);
   if(!b) return null;
   const code = generateLocalShareCode();
-  b.visibility='shared'; b.share_code = code; b.share_code_expires = new Date(Date.now() + hours*3600*1000).toISOString();
-  saveData(store); render();
+  b.visibility='shared';
+  b.share_code = code;
+  b.share_code_expires = new Date(Date.now() + hours*3600*1000).toISOString();
+  saveData(store);
+  render();
   return {share_code:code, expires_in_hours:hours};
 }
 
 async function activateShare(boardId) {
   if (appConfig.backendAvailable) {
-    // call backend
-    const res = await fetch(appConfig.api.activateShare, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: `board_id=${boardId}` });
+    const res = await fetch(appConfig.api.activateShare, {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: `board_id=${boardId}`
+    });
     return await res.json();
   } else {
     return await activateShareLocal(boardId);
@@ -190,7 +212,6 @@ async function joinWithCodeLocal(code) {
   const b = store.boards.find(x=>x.share_code===code);
   if(!b) return { error: 'Code not found' };
   if (b.share_code_expires && new Date(b.share_code_expires) < new Date()) return { error:'Code expired' };
-  // add current user as member — local model has no board_members table; we'll simulate by pushing to a members array on board
   b._members = b._members || [];
   if (!b._members.includes(currentUserId)) b._members.push(currentUserId);
   saveData(store);
@@ -199,7 +220,11 @@ async function joinWithCodeLocal(code) {
 
 async function joinWithCode(code) {
   if (appConfig.backendAvailable) {
-    const res = await fetch(appConfig.api.joinWithCode, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: `code=${encodeURIComponent(code)}` });
+    const res = await fetch(appConfig.api.joinWithCode, {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: `code=${encodeURIComponent(code)}`
+    });
     return await res.json();
   } else {
     return await joinWithCodeLocal(code);
@@ -207,22 +232,48 @@ async function joinWithCode(code) {
 }
 
 // --- UI wiring ---
-createBoardBtn.onclick = ()=>{ if(newBoardTitle.value.trim()) { addBoard(newBoardTitle.value.trim()); newBoardTitle.value=''; } };
+createBoardBtn.onclick = ()=>{
+  if(newBoardTitle.value.trim()) {
+    addBoard(newBoardTitle.value.trim());
+    newBoardTitle.value='';
+  }
+};
 shareBtn.onclick = async ()=>{
   const res = await activateShare(currentBoardId);
   if(res && res.share_code) {
-    shareCodeBox.style.display='flex'; shareCodeText.textContent = `Koodi: ${res.share_code} (exp: ${res.share_code_expires || res.expires_in_hours + 'h'})`;
+    shareCodeBox.style.display='flex';
+    shareCodeText.textContent = `Koodi: ${res.share_code} (exp: ${res.share_code_expires || res.expires_in_hours + 'h'})`;
   } else {
-    alert('Jaaaminen epäonnistui');
+    alert('Jakaminen epäonnistui');
   }
 };
-copyShareBtn.onclick = ()=>{ const text = shareCodeText.textContent; navigator.clipboard.writeText(text).then(()=> alert('Kopioitu leikepöydälle')); };
+copyShareBtn.onclick = ()=>{
+  const text = shareCodeText.textContent;
+  navigator.clipboard.writeText(text).then(()=> alert('Kopioitu leikepöydälle'));
+};
 joinCodeBtn.onclick = async ()=>{
-  const code = joinCodeInput.value.trim(); if(!code) return; joinMsg.textContent='Yhdistetään...';
+  const code = joinCodeInput.value.trim();
+  if(!code) return;
+  joinMsg.textContent='Yhdistetään...';
   const res = await joinWithCode(code);
-  if(res && res.ok) { joinMsg.textContent='Liityit onnistuneesti!'; currentBoardId = res.board_id; render(); } else { joinMsg.textContent = 'Virhe: ' + (res.error || 'ei'); }
+  if(res && res.ok) {
+    joinMsg.textContent='Liityit onnistuneesti!';
+    currentBoardId = res.board_id;
+    render();
+  } else {
+    joinMsg.textContent = 'Virhe: ' + (res.error || 'ei');
+  }
 };
 
-function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" }[c])); }
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c=>({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":"&#39;"
+  }[c]));
+}
 
+// ensimmäinen renderöinti
 render();
