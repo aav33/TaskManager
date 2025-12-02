@@ -1,5 +1,4 @@
-
- {
+{
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -241,3 +240,4 @@ header button {
   box-shadow: 0 6px 18px rgba(2, 41, 71, 0.15);
   display: none;
 }
+
