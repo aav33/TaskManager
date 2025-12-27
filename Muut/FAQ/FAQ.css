@@ -1,0 +1,119 @@
+:root {
+  --bg: #F1F3FE;        /* Arka plan */
+  --text: #6B7280;      /* Ana metin */
+  --accent: #6C63FF;    /* Vurgu rengi */
+  --card: #BBC1D4;      /* Kart / FAQ arka planı */
+  --muted: #8A90A5;     /* Yardımcı metin */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 40px;
+  margin-bottom: 10px;
+  color: #2f2f2f;
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--muted);
+  margin-bottom: 50px;
+}
+
+.faq {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+
+.faq-item {
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 24px;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #2f2f2f;
+}
+
+.faq-question:hover {
+  background: rgba(108, 99, 255, 0.12);
+}
+
+.icon {
+  font-size: 24px;
+  color: var(--accent);
+  transition: transform .3s;
+}
+
+.faq-item.active .icon {
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s ease;
+}
+
+.faq-answer p {
+  padding: 0 24px 24px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* X Butonu */
+.close-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  background: var(--accent);
+  border-radius: 50%;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(108, 99, 255, .4);
+  transition: all .2s ease;
+  z-index: 1000;
+}
+
+.close-btn:hover {
+  background: #554ee6;
+  transform: scale(1.1);
+}
