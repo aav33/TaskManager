@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<title>Teema</title>
+<link rel="stylesheet" href="Teema.css">
+</head>
+<body>
+
+<!-- LEFT -->
+<div class="sidebar">
+<div class="palette" onclick="setTheme(0)">
+    <span style="background:#F1F3FE"></span>
+    <span style="background:#6B7280"></span>
+    <span style="background:#6C63FF"></span>
+  </div>
+
+  <div class="palette" onclick="setTheme(1)">
+    <span style="background:#fff7e6"></span>
+    <span style="background:#0f2a44"></span>
+    <span style="background:#ff8fb3"></span>
+  </div>
+
+  <div class="palette" onclick="setTheme(2)">
+    <span style="background:#55423d"></span>
+    <span style="background:#fff3ec"></span>
+    <span style="background:#ffc0ad"></span>
+  </div>
+
+  <div class="palette" onclick="setTheme(3)">
+    <span style="background:#11120D"></span>
+    <span style="background:#FFFAF4"></span>
+    <span style="background:#D8CFBC"></span>
+  </div>
+
+  <div class="palette" onclick="setTheme(4)">
+    <span style="background:#0f172a"></span>
+    <span style="background:#e2e8f0"></span>
+    <span style="background:#38bdf8"></span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <h1>Valitse haluamasi<br>TEEMA.</h1>
+  <p>
+    Voit vaihtaa sivun teemaa napsauttamalla vasemmalla 
+    olevia paletteja.
+  </p>
+
+  <div class="card">
+    <h3>Esimerkki kortti</h3>
+    <p>Jos tykkäsit tästä teemasta, voit asentaa sen painamalla alhaalla olevaa nappia.</p>
+    <button>Asenna teema!</button>
+  </div>
+</div>
+<script src="Teema.js"></script>
+</body>
+</html>
