@@ -1,4 +1,5 @@
 <?php
+session_start();
 header("Content-Type: application/json");
 
 require __DIR__ . "/PHPMailer/PHPMailer.php";

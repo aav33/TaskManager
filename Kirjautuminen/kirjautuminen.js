@@ -116,7 +116,8 @@ loginForm.addEventListener('submit', async (e)=>{
     const res = await fetch('login.php', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({email, password: pwd})
+      body: JSON.stringify({email, password: pwd}),
+      credentials: 'same-origin' // ← tämä on tärkeä!
     });
     const json = await res.json();
     if(json.ok){
