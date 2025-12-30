@@ -57,10 +57,10 @@ function logout() {
   boards = [];
   localStorage.clear();
   alert('Uloskirjautuminen onnistui!');
-  window.location.href = "../login.html";
+  window.location.href = "../Kirjautuminen/kirjautuminen.html";
 }
 
-/*Taulun luonti pop-upilla
+/*Taulun luonti pop-upilla (Tekemässä)
 createBoardBtn.addEventListener('click', () => {
   if (!loggedIn) {
     alert("Kirjaudu ensin sisään!");
@@ -104,7 +104,7 @@ function renderBoards() {
     title.textContent = b.title;
 
     const favBtn = document.createElement('button');
-    favBtn.textContent = b.favorite ? "⭐" : "☆";
+    favBtn.textContent = b.favorite ? "⭐" : "☆"; //Tähdet
     favBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       b.favorite = !b.favorite;
@@ -113,7 +113,7 @@ function renderBoards() {
     });
 
     const delBtn = document.createElement('button');
-    delBtn.textContent = "🗑️";
+    delBtn.textContent = "🗑️"; //Poistaminen
     delBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       if (confirm(`Haluatko varmasti poistaa taulun "${b.title}"?`)) {
