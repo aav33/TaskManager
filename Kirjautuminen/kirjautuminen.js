@@ -123,7 +123,7 @@ loginForm.addEventListener('submit', async (e)=>{
     if(json.ok){
       showLoginMessage('<div class="note">Kirjautuminen onnistui — ohjataan...</div>');
       // Valinnainen: uudelleenohjaus
-      setTimeout(()=> window.location = '../Tauluvalikko/Tauluvalikko.html', 800);
+      setTimeout(()=> window.location = '/Tauluvalikko/Tauluvalikko.html', 800);
     } else {
       showLoginMessage('<span class="error">'+(json.message||'Kirjautuminen epäonnistui')+'</span>');
     }

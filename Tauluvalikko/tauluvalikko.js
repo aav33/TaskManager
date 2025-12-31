@@ -148,10 +148,6 @@ function openBoard(index) {
     "_blank" // avaa uuteen välilehteen
   );
 }
-<<<<<<< Updated upstream
-=======
-
-
 
 // --- taulujen haku ---
 searchInput.addEventListener('input', () => {
@@ -203,5 +199,3 @@ function renderFilteredBoards(filteredBoards) {
     }
   });
 }
-
->>>>>>> Stashed changes
