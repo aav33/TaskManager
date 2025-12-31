@@ -288,3 +288,8 @@ input#new-task-input {
   font-weight: 600;
   cursor: pointer;
 }
+
+/* Utility hidden class used by JS to toggle visibility */
+.hidden {
+  display: none !important;
+}
