@@ -152,6 +152,7 @@ function openBoard(index) {
 =======
 
 
+
 // --- taulujen haku ---
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.toLowerCase().trim();

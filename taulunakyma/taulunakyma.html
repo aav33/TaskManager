@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <!doctype html>
 <html lang="en">
 <head>
@@ -379,6 +380,39 @@ render();
         <div id="todo-list" class="todo-list"></div>
     </div>
 
+=======
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Boards Pro - Share Update</title>
+    <link rel="stylesheet" href="../taulunakyma/taulunakyma.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>MINI BOARDS</h2>
+        <p>Ammattimainen hallinta</p>
+        <div id="category-list" class="category-list"></div>
+        <button class="add-board-btn" onclick="openModal('board-modal')">+ Luo minitaulu</button>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1 id="current-category-title">Ladataan...</h1>
+            <button class="btn btn-primary" style="background: var(--accent);" onclick="openShareModal()">🔗 Jaa taulu</button>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="todo-input" placeholder="Kirjoita uusi tehtävä...">
+            <button class="btn btn-primary" onclick="addTodo()">Lisää</button>
+        </div>
+
+        <div id="todo-list" class="todo-list"></div>
+    </div>
+
+>>>>>>> Stashed changes
     <div id="board-modal" class="modal">
         <div class="modal-content">
             <h3>Luo uusi minitaulu</h3>
@@ -402,5 +436,9 @@ render();
     </div>
     <script src="../taulunakyma/taulunakyma.js"></script>
 </body>
+<<<<<<< Updated upstream
+</html>
+>>>>>>> Stashed changes
+=======
 </html>
 >>>>>>> Stashed changes
