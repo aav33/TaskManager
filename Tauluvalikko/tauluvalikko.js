@@ -24,7 +24,7 @@ profilePic.addEventListener('click', () => {
 
 function logout() {
   alert("Uloskirjautuminen onnistui!");
-  window.location.href = "../login.html";
+  window.location.href = "../Etusivu/etusivu.html";
 }
 
 // --- popup ---
@@ -109,8 +109,31 @@ function renderBoards() {
   });
 }
 
+// --- lataa taulut (eli taulut eivät poistu kun päivitetään sivu) ---
+document.addEventListener("DOMContentLoaded", loadBoards);
+
+async function loadBoards() {
+  try {
+    const res = await fetch("get_boards.php");
+    const data = await res.json();
+
+    boards = data.map(b => ({
+      id: b.id,
+      title: b.title,
+      visibility: b.visibility,
+      code: b.code,
+      favorite: false
+    }));
+
+    renderBoards();
+  } catch (err) {
+    alert("Taulut eivät latautuneet");
+  }
+}
+// --- -------------------------- -------------------------------- ---
+
 // --- taulun avaaminen ---
 function openBoard(index) {
   const board = boards[index];
-  console.log("Avataan taulu:", board.title);
+  window.location.href = `../taulunakyma/taulunakyma.html?id=${board.id}`;
 }
