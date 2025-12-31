@@ -1,68 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fi">
-
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mini Boards — Taulunäkymä (Demo)</title>
-
-  <link rel="stylesheet" href="taulunakyma.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Boards Pro - Share Update</title>
+    <link rel="stylesheet" href="../taulunakyma/taulunakyma.css">
 </head>
-
 <body>
-  <div class="card">
-    <!-- Sivupalkki -->
+
     <div class="sidebar">
-      <div class="logo">Mini Boards</div>
-      <div class="small">Boards</div>
-      <div class="boards-list" id="boardsList"></div>
-
-      <div class="forms" style="margin-top:12px">
-        <input type="text" id="newBoardTitle" placeholder="Uusi taulu" />
-        <button class="btn" id="createBoardBtn">Luo</button>
-      </div>
-
-      <div style="margin-top:12px">
-        <div class="small">Liity tauluun koodilla</div>
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <input id="joinCodeInput" placeholder="000123"
-            style="flex:1;padding:8px;border-radius:8px;border:1px solid #e6e9f2" />
-          <button class="btn ghost" id="joinCodeBtn">Liity</button>
-        </div>
-        <div id="joinMsg" class="small" style="margin-top:8px"></div>
-      </div>
-
-      <div class="footer-note">
-        Tämä demo käyttää LocalStoragea. Jos backend on valmis, aseta <code>appConfig.backendAvailable=true</code> ja
-        voit tehdä oikean API‑pyynnön.
-      </div>
+        <h2>MINI BOARDS</h2>
+        <p>Ammattimainen hallinta</p>
+        <div id="category-list" class="category-list"></div>
+        <button class="add-board-btn" onclick="openModal('board-modal')">+ Luo minitaulu</button>
     </div>
 
-    <!-- Pääalue -->
-    <div class="main">
-      <div class="board-header">
-        <div>
-          <h2 class="board-title" id="boardTitle">Valitse taulu</h2>
-          <div class="small" id="boardMeta"></div>
+    <div class="main-content">
+        <div class="header">
+            <h1 id="current-category-title">Ladataan...</h1>
+            <button class="btn btn-primary" style="background: var(--accent);" onclick="openShareModal()">🔗 Jaa taulu</button>
         </div>
-        <div class="controls">
-          <button class="btn ghost" id="shareBtn">Jaa</button>
-          <div id="shareCodeBox" style="display:none;align-items:center;gap:8px">
-            <span class="small" id="shareCodeText"></span>
-            <button class="btn" id="copyShareBtn">Kopioi</button>
-          </div>
+
+        <div class="input-group">
+            <input type="text" id="todo-input" placeholder="Kirjoita uusi tehtävä...">
+            <button class="btn btn-primary" onclick="addTodo()">Lisää</button>
         </div>
-      </div>
 
-      <div class="columns" id="columns"></div>
-
-      <div style="margin-top:12px">
-        <div class="small">Esimerkkiverkko: tehtävät, minitaulut ja jako.</div>
-      </div>
+        <div id="todo-list" class="todo-list"></div>
     </div>
-  </div>
 
-  <script src="taulunakyma.js"></script>
+    <div id="board-modal" class="modal">
+        <div class="modal-content">
+            <h3>Luo uusi minitaulu</h3>
+            <p>Anna nimi uudelle taululle:</p>
+            <input type="text" id="new-board-name" class="modal-input" placeholder="Esim. Koulu, Työ...">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="flex:1; background:#f1f5f9;" onclick="closeModal('board-modal')">Peruuta</button>
+                <button class="btn btn-primary" style="flex:1;" onclick="saveNewBoard()">Luo</button>
+            </div>
+        </div>
+    </div>
+
+<div id="share-modal" class="modal">
+    <div class="modal-content">
+        <h3>Jaa taulu kaverille 🚀</h3>
+        <p>Tässä on taulun jakokoodi:</p>
+        
+        <div style="display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 20px;">
+            <div id="share-code-display" class="share-code-box" style="margin:0; flex:1;">------</div>
+            <button class="btn" onclick="copyCode()" title="Kopioi leikepöydälle">📋</button>
+        </div>
+        
+        <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 20px;">
+        
+        <p>Lähetä koodi suoraan Gmaililla:</p>
+        <input type="email" id="share-email-input" class="modal-input" placeholder="kaveri@gmail.com">
+        
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn" style="flex:1; background:#f1f5f9;" onclick="closeModal('share-modal')">Sulje</button>
+            <button class="btn btn-primary" style="flex:1;" onclick="sendCodeViaEmail()">Lähetä</button>
+        </div>
+    </div>
+</div>
+
+    <script src="../taulunakyma/taulunakyma.js"></script>
 </body>
-
 </html>

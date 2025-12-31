@@ -38,3 +38,6 @@ function setTheme(index) {
   document.documentElement.style.setProperty('--accent', theme.accent);
   document.documentElement.style.setProperty('--card', theme.card);
 }
+function setAvatar(src) {
+  document.getElementById("top-avatar").src = src;
+}
