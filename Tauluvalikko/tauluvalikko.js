@@ -27,6 +27,14 @@ function logout() {
   window.location.href = "../Etusivu/etusivu.html";
 }
 
+function theme() {
+  window.location.href = "../Muut/Teema/Teema.html";
+}
+
+function question() {
+  window.location.href = "../Muut/FAQ/FAQ.html";
+}
+
 // --- popup ---
 createBoardBtn.addEventListener('click', () => {
   popup.classList.remove('hidden');
@@ -135,7 +143,10 @@ async function loadBoards() {
 // --- taulun avaaminen ---
 function openBoard(index) {
   const board = boards[index];
-  window.location.href = `../taulunakyma/taulunakyma.html?id=${board.id}`;
+  window.open(
+    `../taulunakyma/taulunakyma.html?id=${board.id}`,
+    "_blank" // avaa uuteen välilehteen
+  );
 }
 
 // --- taulujen haku ---
@@ -188,4 +199,3 @@ function renderFilteredBoards(filteredBoards) {
     }
   });
 }
-

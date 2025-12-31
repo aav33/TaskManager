@@ -1,279 +1,259 @@
-/*
-  Mini Boards — single-file front-end demo.
-  - LocalStorage based data model compatible with the DB model discussed earlier.
-  - Supports: create board, create category, create task, mark done, delete, share-code generation (local) and join-by-code (local).
-  - If you have backend endpoints, set appConfig.backendAvailable = true and fill api endpoints.
-*/
+// --- MUUTTUJAT JA ALUSTUS ---
+const urlParams = new URLSearchParams(window.location.search);
+const currentBoardId = urlParams.get('id');
 
-const appConfig = {
-  backendAvailable: false, // set true if you have working backend URLs
-  api: {
-    activateShare: '/api/activate_share.php',
-    joinWithCode: '/api/join_with_code.php'
-  }
-};
+let categories = []; 
+let todos = [];
+let currentCategory = ""; 
+let categoryMap = {}; // { "Kategorian Nimi": ID_tietokannassa }
 
-// --- data helpers (localStorage) ---
-function loadData() {
-  const raw = localStorage.getItem('mini_boards_v1');
-  return raw ? JSON.parse(raw) : { users:[], boards:[], categories:[], tasks:[] };
-}
-function saveData(data) { localStorage.setItem('mini_boards_v1', JSON.stringify(data)); }
+// --- 1. DATAN LATAUS ---
+async function initializeData() {
+    if (!currentBoardId) return;
 
-function uid() { return Math.floor(Date.now() + Math.random()*1000); }
+    try {
+        const response = await fetch(`get_board_data.php?id=${currentBoardId}`);
+        const result = await response.json();
 
-// initial demo data
-let store = loadData();
-if (!store._initialized) {
-  const me = { id: 1, email: 'demo@example.com', display_name: 'Demo' };
-  store.users.push(me);
-  const bid = uid();
-  store.boards.push({ id: bid, owner_id: me.id, title: 'Esimerkkitaulu', visibility: 'private', share_code: null, share_code_expires: null, created_at: new Date().toISOString() });
-  const c1 = uid(); const c2 = uid();
-  store.categories.push({ id: c1, board_id: bid, name: 'Koulu', color: '#6c63ff' });
-  store.categories.push({ id: c2, board_id: bid, name: 'Koti', color: '#ff9f1c' });
-  store.tasks.push({ id: uid(), category_id: c1, title: 'Tee harjoitukset', is_done: 0, position: 1 });
-  store.tasks.push({ id: uid(), category_id: c1, title: 'Lue kappale 3', is_done: 1, position: 2 });
-  store.tasks.push({ id: uid(), category_id: c2, title: 'Siivoa huone', is_done: 0, position: 1 });
-  store._initialized = true;
-  saveData(store);
-}
+        if (result.success) {
+            categoryMap = {};
+            
+            // Tallennetaan kategoriat ja niiden ID:t
+            categories = result.categories.map(c => {
+                categoryMap[c.name] = c.id;
+                return c.name;
+            });
 
-let currentUserId = store.users[0].id;
-let currentBoardId = store.boards[0].id;
+            // Muunnetaan tehtävät
+            todos = result.tasks.map(t => ({
+                id: t.id,
+                text: t.title,
+                category: result.categories.find(c => c.id == t.category_id)?.name || "",
+                completed: parseInt(t.is_done) === 1
+            }));
 
-// --- DOM refs ---
-const boardsList = document.getElementById('boardsList');
-const newBoardTitle = document.getElementById('newBoardTitle');
-const createBoardBtn = document.getElementById('createBoardBtn');
-const boardTitle = document.getElementById('boardTitle');
-const boardMeta = document.getElementById('boardMeta');
-const columnsEl = document.getElementById('columns');
-const shareBtn = document.getElementById('shareBtn');
-const shareCodeBox = document.getElementById('shareCodeBox');
-const shareCodeText = document.getElementById('shareCodeText');
-const copyShareBtn = document.getElementById('copyShareBtn');
-const joinCodeInput = document.getElementById('joinCodeInput');
-const joinCodeBtn = document.getElementById('joinCodeBtn');
-const joinMsg = document.getElementById('joinMsg');
-
-function renderBoards() {
-  boardsList.innerHTML = '';
-  store.boards.forEach(b => {
-    const el = document.createElement('div');
-    el.className = 'board-item' + (b.id===currentBoardId? ' active':'');
-    el.innerHTML = `<div>${escapeHtml(b.title)}</div><div class="small">${b.visibility}</div>`;
-    el.onclick = ()=>{ currentBoardId = b.id; render(); };
-    boardsList.appendChild(el);
-  });
-}
-
-function render() {
-  renderBoards();
-  const board = store.boards.find(b=>b.id===currentBoardId);
-  if (!board) { boardTitle.textContent = 'Valitse taulu'; columnsEl.innerHTML=''; boardMeta.textContent=''; shareCodeBox.style.display='none'; return; }
-  boardTitle.textContent = board.title;
-  boardMeta.textContent = `Omistaja: ${board.owner_id} • ${board.visibility}`;
-  if (board.share_code) {
-    shareCodeBox.style.display='flex';
-    shareCodeText.textContent = `Koodi: ${board.share_code} (exp: ${board.share_code_expires? new Date(board.share_code_expires).toLocaleString() : '∞'})`;
-  } else {
-    shareCodeBox.style.display='none';
-  }
-
-  const categories = store.categories.filter(c=>c.board_id===board.id);
-  columnsEl.innerHTML = '';
-  categories.forEach(cat => {
-    const col = document.createElement('div'); col.className='column';
-    col.innerHTML = `<h3><span class="color-dot" style="background:${cat.color||'#ddd'}"></span>${escapeHtml(cat.name)}</h3>`;
-    const inputRow = document.createElement('div'); inputRow.className='input-row';
-    const tInput = document.createElement('input'); tInput.placeholder='Uusi tehtävä';
-    const addBtn = document.createElement('button'); addBtn.className='btn'; addBtn.textContent='Lisää';
-    addBtn.onclick = ()=>{ if(tInput.value.trim()) addTask(cat.id, tInput.value.trim()); tInput.value=''; };
-    inputRow.appendChild(tInput); inputRow.appendChild(addBtn);
-    col.appendChild(inputRow);
-
-    const tasks = store.tasks.filter(t=>t.category_id===cat.id).sort((a,b)=>a.position-b.position);
-    if (tasks.length===0) {
-      const ph = document.createElement('div'); ph.className='placeholder'; ph.textContent='Ei tehtäviä'; col.appendChild(ph);
-    } else {
-      tasks.forEach(t=>{ const tEl = renderTask(t); col.appendChild(tEl); });
+            if (categories.length > 0) {
+                switchCategory(categories[0]);
+            } else {
+                renderSidebar();
+            }
+        }
+    } catch (error) {
+        console.error("Virhe ladattaessa tietoja:", error);
     }
-    const footer = document.createElement('div'); footer.style.marginTop='8px';
-    const delCat = document.createElement('button'); delCat.className='btn ghost'; delCat.textContent='Poista kategoria';
-    delCat.onclick = ()=>{ if(confirm('Poistetaanko kategoria ja sen tehtävät?')) deleteCategory(cat.id); };
-    footer.appendChild(delCat);
-    col.appendChild(footer);
-
-    columnsEl.appendChild(col);
-  });
-
-  const addCol = document.createElement('div'); addCol.className='column';
-  addCol.innerHTML = `<h3>+ Lisää minitaulu</h3>`;
-  const inputRow = document.createElement('div'); inputRow.className='input-row';
-  const nameInput = document.createElement('input'); nameInput.placeholder='Kategorian nimi';
-  const colorInput = document.createElement('input'); colorInput.type='color'; colorInput.value='#6c63ff'; colorInput.title='väri';
-  const addBtn = document.createElement('button'); addBtn.className='btn'; addBtn.textContent='Lisää';
-  addBtn.onclick = ()=>{ if(nameInput.value.trim()) addCategory(currentBoardId, nameInput.value.trim(), colorInput.value); nameInput.value=''; };
-  inputRow.appendChild(nameInput); inputRow.appendChild(colorInput); inputRow.appendChild(addBtn);
-  addCol.appendChild(inputRow);
-  columnsEl.appendChild(addCol);
 }
 
-function renderTask(t) {
-  const div = document.createElement('div'); div.className='task'+(t.is_done? ' done':'');
-  div.innerHTML = `<input type='checkbox' ${t.is_done? 'checked':''} /> <div class='title'>${escapeHtml(t.title)}</div> <div style='display:flex;gap:6px'><button class='btn ghost' data-id='edit'>✎</button><button class='btn ghost' data-id='del'>🗑</button></div>`;
-  const cb = div.querySelector('input[type=checkbox]'); cb.onchange = ()=> toggleDone(t.id, cb.checked);
-  div.querySelector("button[data-id='del']").onclick = ()=>{ if(confirm('Poistetaanko tehtävä?')) deleteTask(t.id); };
-  div.querySelector("button[data-id='edit']").onclick = ()=>{ const nv = prompt('Muokkaa tehtävää', t.title); if(nv) editTask(t.id, nv); };
-  return div;
-}
+// --- 2. TEHTÄVIEN HALLINTA ---
 
-// --- data operations ---
-function addBoard(title) {
-  const b = { id: uid(), owner_id: currentUserId, title, visibility:'private', share_code:null, share_code_expires:null, created_at:new Date().toISOString() };
-  store.boards.push(b); saveData(store); currentBoardId=b.id; render();
-}
-function addCategory(boardId, name, color) {
-  const c = { id: uid(), board_id: boardId, name, color }; store.categories.push(c); saveData(store); render();
-}
-function deleteCategory(catId) {
-  store.categories = store.categories.filter(c=>c.id!==catId);
-  store.tasks = store.tasks.filter(t=>t.category_id!==catId);
-  saveData(store); render();
-}
-function addTask(categoryId, title) {
-  const pos = store.tasks.filter(t=>t.category_id===categoryId).length + 1;
-  const t = { id: uid(), category_id: categoryId, title, is_done:0, position: pos };
-  store.tasks.push(t);
-  saveData(store);
-  render();
-}
+async function addTodo() {
+    const input = document.getElementById('todo-input');
+    const text = input.value.trim();
 
-function deleteTask(taskId) {
-  store.tasks = store.tasks.filter(t=>t.id!==taskId);
-  saveData(store);
-  render();
-}
+    if (text === "" || !currentCategory) return;
 
-function editTask(taskId, title) {
-  const t = store.tasks.find(x=>x.id===taskId);
-  if(t){
-    t.title = title;
-    saveData(store);
-    render();
-  }
-}
+    const catId = categoryMap[currentCategory];
 
-function toggleDone(taskId, isDone) {
-  const t = store.tasks.find(x=>x.id===taskId);
-  if(t){
-    t.is_done = isDone ? 1 : 0;
-    saveData(store);
-    render();
-  }
-}
-
-// --- share code generation (local) ---
-function generateLocalShareCode() {
-  let code;
-  do {
-    code = String(Math.floor(Math.random()*1000000)).padStart(6,'0');
-  } while (store.boards.some(b=>b.share_code === code));
-  return code;
-}
-
-async function activateShareLocal(boardId, hours=24) {
-  const b = store.boards.find(x=>x.id===boardId);
-  if(!b) return null;
-  const code = generateLocalShareCode();
-  b.visibility='shared';
-  b.share_code = code;
-  b.share_code_expires = new Date(Date.now() + hours*3600*1000).toISOString();
-  saveData(store);
-  render();
-  return {share_code:code, expires_in_hours:hours};
-}
-
-async function activateShare(boardId) {
-  if (appConfig.backendAvailable) {
-    const res = await fetch(appConfig.api.activateShare, {
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body: `board_id=${boardId}`
+    const response = await fetch('add_task.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            task_text: text,
+            category_id: catId
+        })
     });
-    return await res.json();
-  } else {
-    return await activateShareLocal(boardId);
-  }
+
+    const result = await response.json();
+
+    if (result.success) {
+        todos.push({ id: result.id, text: text, category: currentCategory, completed: false });
+        input.value = "";
+        renderTodos();
+    }
 }
 
-async function joinWithCodeLocal(code) {
-  const b = store.boards.find(x=>x.share_code===code);
-  if(!b) return { error: 'Code not found' };
-  if (b.share_code_expires && new Date(b.share_code_expires) < new Date()) return { error:'Code expired' };
-  b._members = b._members || [];
-  if (!b._members.includes(currentUserId)) b._members.push(currentUserId);
-  saveData(store);
-  return { ok:true, board_id: b.id };
+async function toggleTodo(id) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+
+    const newStatus = !todo.completed;
+
+    try {
+        const response = await fetch('update_task_status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                task_id: id, 
+                is_done: newStatus ? 1 : 0 
+            })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            todos = todos.map(t => t.id === id ? {...t, completed: newStatus} : t);
+            renderTodos();
+        }
+    } catch (error) {
+        console.error("Virhe tilan päivityksessä:", error);
+    }
 }
 
-async function joinWithCode(code) {
-  if (appConfig.backendAvailable) {
-    const res = await fetch(appConfig.api.joinWithCode, {
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body: `code=${encodeURIComponent(code)}`
+async function deleteTodo(id) {
+    if (!confirm("Haluatko varmasti poistaa tämän tehtävän?")) return;
+
+    try {
+        const response = await fetch('../taulunakyma/delete_task.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task_id: id })
+        });
+
+        const text = await response.text();
+        const result = JSON.parse(text);
+
+        if (result.success) {
+            todos = todos.filter(t => t.id !== id);
+            renderTodos();
+        } else {
+            alert("Virhe poistettaessa: " + result.error);
+        }
+    } catch (error) {
+        console.error("Virhe poistoprosessissa:", error);
+    }
+}
+
+// --- 3. KATEGORIOIDEN HALLINTA ---
+
+async function saveNewBoard() {
+    const name = document.getElementById('new-board-name').value.trim();
+    if (name && !categories.includes(name)) {
+        const response = await fetch('add_category.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                board_id: currentBoardId
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            categoryMap[name] = result.id;
+            categories.push(name);
+            renderSidebar();
+            switchCategory(name);
+            closeModal('board-modal');
+            document.getElementById('new-board-name').value = "";
+        }
+    }
+}
+
+async function deleteBoard(catName) {
+    const catId = categoryMap[catName];
+    if (!catId) return;
+
+    if (confirm(`Haluatko varmasti poistaa kategorian "${catName}" ja kaikki sen tehtävät?`)) {
+        try {
+            const response = await fetch('delete_category.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ category_id: catId })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                categories = categories.filter(c => c !== catName);
+                todos = todos.filter(t => t.category !== catName);
+                delete categoryMap[catName];
+
+                currentCategory = categories.length > 0 ? categories[0] : "";
+                
+                renderSidebar();
+                switchCategory(currentCategory);
+            }
+        } catch (error) {
+            console.error("Virhe poistettaessa kategoriaa:", error);
+        }
+    }
+}
+
+// --- 4. JAKOKOODIN HALLINTA ---
+
+async function openShareModal() {
+    try {
+        // Haetaan taulun tiedot tietokannasta, jotta saadaan koodi
+        const response = await fetch(`get_board_data.php?id=${currentBoardId}`);
+        const result = await response.json();
+
+        if (result.success && result.board.code) {
+            document.getElementById('share-code-display').innerText = result.board.code;
+            openModal('share-modal');
+        } else {
+            alert("Jakokoodia ei löytynyt. Varmista, että taulu on luotu oikein.");
+        }
+    } catch (error) {
+        console.error("Virhe haettaessa koodia:", error);
+    }
+}
+
+// --- RENDERÖINTI JA MODAALIT ---
+
+function renderSidebar() {
+    const container = document.getElementById('category-list');
+    if(!container) return;
+    container.innerHTML = "";
+    categories.forEach(cat => {
+        const div = document.createElement('div');
+        div.className = "category-item";
+        div.innerHTML = `
+            <button class="category-btn ${cat === currentCategory ? 'active' : ''}" onclick="switchCategory('${cat}')">${cat}</button>
+            <button class="delete-board-x" onclick="deleteBoard('${cat}')">×</button>
+        `;
+        container.appendChild(div);
     });
-    return await res.json();
-  } else {
-    return await joinWithCodeLocal(code);
-  }
 }
 
-// --- UI wiring ---
-createBoardBtn.onclick = ()=>{
-  if(newBoardTitle.value.trim()) {
-    addBoard(newBoardTitle.value.trim());
-    newBoardTitle.value='';
-  }
-};
-shareBtn.onclick = async ()=>{
-  const res = await activateShare(currentBoardId);
-  if(res && res.share_code) {
-    shareCodeBox.style.display='flex';
-    shareCodeText.textContent = `Koodi: ${res.share_code} (exp: ${res.share_code_expires || res.expires_in_hours + 'h'})`;
-  } else {
-    alert('Jakaminen epäonnistui');
-  }
-};
-copyShareBtn.onclick = ()=>{
-  const text = shareCodeText.textContent;
-  navigator.clipboard.writeText(text).then(()=> alert('Kopioitu leikepöydälle'));
-};
-joinCodeBtn.onclick = async ()=>{
-  const code = joinCodeInput.value.trim();
-  if(!code) return;
-  joinMsg.textContent='Yhdistetään...';
-  const res = await joinWithCode(code);
-  if(res && res.ok) {
-    joinMsg.textContent='Liityit onnistuneesti!';
-    currentBoardId = res.board_id;
-    render();
-  } else {
-    joinMsg.textContent = 'Virhe: ' + (res.error || 'ei');
-  }
-};
+function renderTodos() {
+    const list = document.getElementById('todo-list');
+    if(!list) return;
+    list.innerHTML = "";
+    const filtered = todos.filter(t => t.category === currentCategory);
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c=>({
-    '&':'&amp;',
-    '<':'&lt;',
-    '>':'&gt;',
-    '"':'&quot;',
-    "'":"&#39;"
-  }[c]));
+    filtered.forEach(todo => {
+        const item = document.createElement('div');
+        item.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+        item.innerHTML = `
+            <div class="todo-content" onclick="toggleTodo(${todo.id})">
+                <input type="checkbox" ${todo.completed ? 'checked' : ''}>
+                <span>${todo.text}</span>
+            </div>
+            <button class="btn btn-danger" onclick="deleteTodo(${todo.id})">Poista</button>
+        `;
+        list.appendChild(item);
+    });
 }
 
-// ensimmäinen renderöinti
-render();
+function switchCategory(cat) {
+    currentCategory = cat;
+    const titleEl = document.getElementById('current-category-title');
+    if(titleEl) titleEl.innerText = cat || "Valitse kategoria";
+    renderSidebar();
+    renderTodos();
+}
+
+function openModal(id) { 
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.style.display = 'flex'; 
+        const input = modal.querySelector('.modal-input');
+        if (input) input.focus();
+    }
+}
+
+function closeModal(id) { 
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = 'none'; 
+}
+
+// Käynnistys
+initializeData();

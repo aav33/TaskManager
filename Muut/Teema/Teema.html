@@ -6,10 +6,13 @@
 <link rel="stylesheet" href="Teema.css">
 </head>
 <body>
-
+<a href="../../Tauluvalikko/tauluvalikko.html" class="close-btn">✕</a>
 <!-- LEFT -->
 <div class="sidebar">
-<div class="palette" onclick="setTheme(0)">
+
+  <div class="sidebar-title">TEEMA</div>
+
+  <div class="palette" onclick="setTheme(0)">
     <span style="background:#F1F3FE"></span>
     <span style="background:#6B7280"></span>
     <span style="background:#6C63FF"></span>
@@ -38,20 +41,40 @@
     <span style="background:#e2e8f0"></span>
     <span style="background:#38bdf8"></span>
   </div>
+
+  <div class="sidebar-title">PROFİİLİKUVAT</div>
+
+  <div class="avatars">
+    <img src="profiili/avatar1.jpg" onclick="setAvatar(this.src)">
+    <img src="profiili/avatar2.jpg" onclick="setAvatar(this.src)">
+    <img src="profiili/avatar3.jpg" onclick="setAvatar(this.src)">
+    <img src="profiili/avatar4.jpg" onclick="setAvatar(this.src)">
+    <img src="profiili/avatar5.jpg" onclick="setAvatar(this.src)">
+    <img src="profiili/avatar6.jpg" onclick="setAvatar(this.src)">
+    <img src="profiili/avatar7.png" onclick="setAvatar(this.src)">
+    <img src="profiili/avatar8.jpg" onclick="setAvatar(this.src)">
+    <img src="profiili/avatar9.jpg" onclick="setAvatar(this.src)">
+    <img src="profiili/avatar10.jpg" onclick="setAvatar(this.src)">
+  </div>
+
 </div>
+
+<!-- Sağ üstte görünen profil -->
+<img id="top-avatar" src="profiili/avatar1.jpg">
+
 
 <!-- MAIN -->
 <div class="main">
-  <h1>Valitse haluamasi<br>TEEMA.</h1>
+  <h1>Valitse haluamasi<br>TEEMA ja PROFIILIKUVAASI.</h1>
   <p>
-    Voit vaihtaa sivun teemaa napsauttamalla vasemmalla 
+    Voit vaihtaa sivun teemaa ja profiilikuvaasi napsauttamalla vasemmalla 
     olevia paletteja.
   </p>
 
   <div class="card">
     <h3>Esimerkki kortti</h3>
-    <p>Jos tykkäsit tästä teemasta, voit asentaa sen painamalla alhaalla olevaa nappia.</p>
-    <button>Asenna teema!</button>
+    <p>Jos tykkäsit tästä teemasta ja profiilikuvaasi, voit asentaa sen painamalla alhaalla olevaa nappia.</p>
+    <button>Asenna teema ja profiilikuva!</button>
   </div>
 </div>
 <script src="Teema.js"></script>
