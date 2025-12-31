@@ -27,6 +27,14 @@ function logout() {
   window.location.href = "../Etusivu/etusivu.html";
 }
 
+function theme() {
+  window.location.href = "../Muut/Teema/Teema.html";
+}
+
+function question() {
+  window.location.href = "../Muut/FAQ/FAQ.html";
+}
+
 // --- popup ---
 createBoardBtn.addEventListener('click', () => {
   popup.classList.remove('hidden');
@@ -135,5 +143,64 @@ async function loadBoards() {
 // --- taulun avaaminen ---
 function openBoard(index) {
   const board = boards[index];
-  window.location.href = `../taulunakyma/taulunakyma.html?id=${board.id}`;
+  window.open(
+    `../taulunakyma/taulunakyma.html?id=${board.id}`,
+    "_blank" // avaa uuteen välilehteen
+  );
 }
+<<<<<<< Updated upstream
+=======
+
+
+// --- taulujen haku ---
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase().trim();
+
+  const filteredBoards = boards.filter(board =>
+    board.title.toLowerCase().includes(query)
+  );
+
+  renderFilteredBoards(filteredBoards);
+});
+
+function renderFilteredBoards(filteredBoards) {
+  allBoards.innerHTML = '';
+  favoritesContainer.innerHTML = '';
+
+  filteredBoards.forEach((b, index) => {
+    const card = document.createElement('div');
+    card.classList.add('board-card');
+
+    const title = document.createElement('span');
+    title.textContent = b.title;
+
+    const favBtn = document.createElement('button');
+    favBtn.textContent = b.favorite ? "⭐" : "☆";
+    favBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      b.favorite = !b.favorite;
+      renderFilteredBoards(filteredBoards);
+    });
+
+    card.appendChild(title);
+    card.appendChild(favBtn);
+
+    card.addEventListener('click', () => {
+      const realIndex = boards.indexOf(b);
+      openBoard(realIndex);
+    });
+
+    allBoards.appendChild(card);
+
+    if (b.favorite) {
+      const favCard = card.cloneNode(true);
+      favCard.addEventListener('click', () => {
+        const realIndex = boards.indexOf(b);
+        openBoard(realIndex);
+      });
+      favoritesContainer.appendChild(favCard);
+    }
+  });
+}
+
+>>>>>>> Stashed changes
